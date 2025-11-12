@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultados de Búsqueda - Agenda AWS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    .contact-photo {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a href="/" class="navbar-brand mb-0 h1">
+        <i class="bi bi-journal-bookmark-fill"></i> Agenda de Contactos AWS
+      </a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card shadow">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 class="mb-0">
+              <i class="bi bi-search"></i> Resultados de Búsqueda: "<%= apellido %>"
+            </h4>
+          </div>
+          <div class="col-auto">
+            <a href="/" class="btn btn-light">
+              <i class="bi bi-arrow-left"></i> Volver
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if (contactos.length === 0) { %>
+          <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle"></i> 
+            No se encontraron contactos con el apellido "<strong><%= apellido %></strong>"
+          </div>
+          <div class="text-center">
+            <a href="/" class="btn btn-primary">
+              <i class="bi bi-arrow-left"></i> Ver Todos los Contactos
+            </a>
+          </div>
+        <% } else { %>
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> 
+            Se encontraron <strong><%= contactos.length %></strong> contacto(s)
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Foto</th>
+                  <th>Nombre Completo</th>
+                  <th>Correo</th>
+                  <th>Fecha de Nacimiento</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% contactos.forEach(contacto => { %>
+                  <tr>
+                    <td>
+                      <% if (contacto.foto_url) { %>
+                        <img src="<%= contacto.foto_url %>" 
+                             alt="<%= contacto.nombre %>" 
+                             class="contact-photo">
+                      <% } else { %>
+                        <div class="contact-photo bg-secondary d-flex align-items-center justify-content-center text-white">
+                          <i class="bi bi-person-fill fs-2"></i>
+                        </div>
+                      <% } %>
+                    </td>
+                    <td>
+                      <strong><%= contacto.nombre %> <%= contacto.apellidos %></strong>
+                    </td>
+                    <td>
+                      <i class="bi bi-envelope"></i> <%= contacto.correo %>
+                    </td>
+                    <td>
+                      <i class="bi bi-calendar"></i> 
+                      <%= new Date(contacto.fecha_nac).toLocaleDateString('es-PE') %>
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group" role="group">
+                        <a href="/editar/<%= contacto.id %>" 
+                           class="btn btn-sm btn-warning" 
+                           title="Editar">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <form action="/contactos/<%= contacto.id %>?_method=DELETE" 
+                              method="POST" 
+                              style="display: inline;"
+                              onsubmit="return confirm('¿Estás seguro de eliminar este contacto?');">
+                          <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <footer class="text-center mt-4 text-muted">
+      <p>
+        <i class="bi bi-cloud"></i> Aplicación desplegada en AWS EC2 | 
+        Base de datos: RDS MySQL | 
+        Almacenamiento: S3
+      </p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
